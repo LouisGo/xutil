@@ -22,6 +22,7 @@
         throttle: function (func, wait, options) {
             var timeout, context, args, result
             var previous = 0
+
             options = options || {}
 
             var later = function () {
@@ -31,7 +32,7 @@
                 if (!timeout) {
                     context = args = null
                 }
-            };
+            }
 
             var throttled = function () {
                 var now = +new Date()
@@ -41,8 +42,10 @@
                 }
 
                 var remaining = wait - (now - previous)
+
                 context = this
                 args = arguments
+
                 if (remaining <= 0 || remaining > wait) {
                     if (timeout) {
                         clearTimeout(timeout)
@@ -90,12 +93,13 @@
                     }, wait)
                 }
                 return result
-            };
+            }
 
             debounced.cancel = function () {
                 clearTimeout(timeout)
                 timeout = null
-            };
+            }
+
             return debounced
         },
         /* 类型判断相关 */
