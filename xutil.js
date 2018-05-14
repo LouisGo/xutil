@@ -3,6 +3,45 @@
     window.xutil = window.xutil || factory
 })(window, document, function (window, document) {
     var xutil = {
+        /* dom操作相关方法 */
+        // 绑定事件
+        on: function () {
+            if (document.addEventListener) {
+                return function (element, event, handler) {
+                    if (element && event && handler) {
+                        element.addEventListener(event, handler, false)
+                    }
+                }
+            } else {
+                return function (element, event, handler) {
+                    if (element && event && handler) {
+                        element.attachEvent('on' + event, handler)
+                    }
+                }
+            }
+        },
+        // 解除事件
+        off: function () {
+            if (document.removeEventListener) {
+                return function (element, event, handler) {
+                    if (element && event && handler) {
+                        element.removeEventListener(event, handler, false)
+                    }
+                }
+            } else {
+                return function (element, event, handler) {
+                    if (element && event && handler) {
+                        element.detachEvent('on' + event, handler)
+                    }
+                }
+            }
+        },
+
+        /* 字符串处理相关方法 */
+        trim: function (str) {
+            return (string || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '')
+        },
+
         /* 数组处理相关方法 */
         // 数组去重（包括对象）
         unique: function (arr) {
@@ -17,6 +56,7 @@
             }
             return ret
         },
+
         /* 函数处理相关 */
         // 函数节流
         throttle: function (func, wait, options) {
@@ -102,6 +142,16 @@
 
             return debounced
         },
+        // 判断是否含有
+        oneOf: function (value, list) {
+            for (var i = 0, len = list.length; i < len; i++) {
+                if (value === list[i]) {
+                    return true
+                }
+            }
+            return false
+        },
+
         /* 类型判断相关 */
         // 获取类型
         getType: function (obj) {
@@ -124,6 +174,7 @@
                 return typeof obj
             }
         },
+
         /* 宿主环境相关方法 */
         // 获取浏览器信息
         getBrowser: function () {
