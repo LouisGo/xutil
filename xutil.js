@@ -1,10 +1,16 @@
-;(function (window, document, factory) {
+;
+(function (window, document, factory) {
     factory = factory(window, document)
     window.xutil = window.xutil || factory
 })(window, document, function (window, document) {
     var xutil = {
+
         /* dom操作相关方法 */
-        // 绑定事件
+
+        /**
+         * @description 绑定事件
+         * @returns {Function}
+         */ 
         on: function () {
             if (document.addEventListener) {
                 return function (element, event, handler) {
@@ -20,7 +26,10 @@
                 }
             }
         },
-        // 解除事件
+        /**
+         * @description 解除事件
+         * @returns {Function}
+         */ 
         off: function () {
             if (document.removeEventListener) {
                 return function (element, event, handler) {
@@ -38,12 +47,57 @@
         },
 
         /* 字符串处理相关方法 */
+
+        /**
+         * @description 去除字符串的左右空格
+         * @param {Array} str 待处理的数组 
+         * @returns {String}
+         */
         trim: function (str) {
-            return (string || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '')
+            return str.replace(/(^\s*)|(\s*$)/g, '')
+        },
+        /**
+         * @description 去除字符串的所有空格
+         * @param {Array} str 待处理的数组 
+         * @returns {String}
+         */
+        trimAll: function (str) {
+            return str.replace(/\s+/g, '')
+        },
+        /**
+         * @description 去除字符串左边的空格
+         * @param {Array} str 待处理的数组 
+         * @returns {String}
+         */
+        trimLeft: function (str) {
+            return str.replace(/(^\s*)/g, '')
+        },
+        /**
+         * @description 去除字符串右边的空格
+         * @param {Array} str 待处理的数组 
+         * @returns {String}
+         */
+        trimRight: function (str) {
+            return str.replace(/(\s*$)/g, '')
+        },
+        /**
+         * @description 替换字符串中的中文，默认为去除
+         * @param {Array} str 待处理的数组 
+         * @param {String} replaceStr 要替换的字段
+         * @returns {String}
+         */
+        filterChinese: function (str, replaceStr) {
+            replaceStr = replaceStr || ''
+            return str.replace(/[\u4E00-\u9FA5]/g, replaceStr);
         },
 
         /* 数组处理相关方法 */
-        // 数组去重（包括对象）
+
+        /**
+         * @description 数组去重（包括对象)
+         * @param {Array} arr 待处理的数组 
+         * @returns {Array}
+         */
         unique: function (arr) {
             var ret = []
             var obj = {}
@@ -56,9 +110,40 @@
             }
             return ret
         },
+        /**
+         * @description 数组分块
+         * @param {Array} arr 待处理的数组 
+         * @param {Number} size 分块数量 
+         * @returns {Array}
+         */
+        chunk: function (arr, size) {
+            size = Math.max(size, 0)
+            var length = arr == null ? 0 : arr.length
+
+            if (!length || size < 1) {
+                return []
+            }
+
+            var index = 0
+            var resIndex = 0
+            var ret = new Array(Math.ceil(length / size))
+
+            while (index < length) {
+                ret[resIndex++] = arr.slice(index, (index += size))
+            }
+
+            return ret
+        },
 
         /* 函数处理相关 */
-        // 函数节流
+
+        /**
+         * @description 函数节流
+         * @param {function} func 节流的回调函数 
+         * @param {number} wait 等待的时间间隔 
+         * @param {object} options leading为false表示禁用第一次, trailing为false表示最后不会再执行一次。默认leading:true, trailing:true
+         * @returns {function}
+         */   
         throttle: function (func, wait, options) {
             var timeout, context, args, result
             var previous = 0
@@ -106,24 +191,30 @@
 
             return throttled
         },
-        // 函数防抖
+        /**
+         * @description 函数防抖
+         * @param {function} func 防抖的回调函数
+         * @param {number} wait 等待的时间间隔
+         * @param {Boolean} immediate 设置为true时则表示立即调用一次
+         * @returns {function}
+         */
         debounce: function (func, wait, immediate) {
             var timeout, result
             var debounced = function () {
                 var context = this
                 var args = arguments
-                
+
                 if (timeout) {
                     clearTimeout(timeout)
                 }
-                
+
                 if (immediate) {
                     var callNow = !timeout
-                    
+
                     timeout = setTimeout(function () {
                         timeout = null
                     }, wait)
-                    
+
                     if (callNow) {
                         result = func.apply(context, args)
                     }
@@ -142,10 +233,15 @@
 
             return debounced
         },
-        // 判断是否含有
-        oneOf: function (value, list) {
-            for (var i = 0, len = list.length; i < len; i++) {
-                if (value === list[i]) {
+        /**
+         * @description 判断数组是否含有
+         * @param {String Number Object} value 待判断的值
+         * @param {Array} arr 待判断的数组  
+         * @returns {Boolean}
+         */ 
+        oneOf: function (value, arr) {
+            for (var i = 0, len = arr.length; i < len; i++) {
+                if (this.eq(value, arr[i])) {
                     return true
                 }
             }
@@ -153,7 +249,12 @@
         },
 
         /* 类型判断相关 */
-        // 获取类型
+
+        /**
+         * @description 判断元素类型
+         * @param {Unknown} obj 待判断的值
+         * @returns {String} 类型字段
+         */ 
         getType: function (obj) {
 
             var class2type = {}
@@ -174,9 +275,55 @@
                 return typeof obj
             }
         },
+        /**
+         * @description 判断是否相等（lodash规则）
+         * @param {Unknown} value 待判断的值1
+         * @param {Unknown} arr 待判断的值2
+         * @returns {Boolean}
+         */ 
+        eq: function (value, other) {
+            return value === other || (value !== value && other !== other)
+        },
 
+        /* 随机生成相关方法 */
+
+        /**
+         * @description 随机范围数值
+         * @param {Number} num1 待生成的值1
+         * @param {Number} num2 待生成的值2
+         * @returns {Number} 
+         */
+        randomNumber: function (num1, num2) {
+            var argsLen = arguments.length
+            if (argsLen === 2) {
+                return Math.round(num1 + Math.random() * (num2 - num1))
+            } else if (argsLen === 1) {
+                return Math.round(Math.random() * num1)
+            } else {
+                throw '请输入类型为Number的参数'
+            }
+        },
+        /**
+         * @description 随机生成颜色
+         * @returns {String} 
+         */
+        randomColor: function () {
+            return '#' + Math.random().toString(16).substring(2).substr(0, 6)
+        },
+        /**
+         * @description 随机生成颜色RBG格式
+         * @returns {String} 
+         */
+        randomColorWithRGB: function () {
+            return 'rgb(' + this.randomNumber(255) + ',' + this.randomNumber(255) + ',' + this.randomNumber(255) + ')'
+        },
+        
         /* 宿主环境相关方法 */
-        // 获取浏览器信息
+
+        /**
+         * @description 获取浏览器信息
+         * @returns {String} 浏览器信息字段
+         */ 
         getBrowser: function () {
             var ua = window.navigator.userAgent
             var ret = 'Unknown browser'
@@ -219,7 +366,10 @@
             }
             return ret
         },
-        // 获取终端信息
+        /**
+         * @description 获取终端信息
+         * @returns {String} 终端信息字段
+         */ 
         getOS: function () {
             var av = window.navigator.appVersion
             var ret = 'Unknown OS'
@@ -237,7 +387,10 @@
             }
             return ret
         },
-        // 获取IE版本
+        /**
+         * @description 获取IE版本
+         * @returns {Boolean} IE版本字段
+         */ 
         getIEVersion: function () {
             var ua = window.navigator.userAgent
             var ret = ''
@@ -259,7 +412,10 @@
             }
             return ret
         },
-        // 判断是否为移动端
+        /**
+         * @description 判断是否为移动端
+         * @returns {Boolean}
+         */ 
         isMobile: function () {
             var ua = window.navigator.userAgent
             if (!!ua.match(/AppleWebKit.*Mobile.*/) && !!ua.match(/AppleWebKit/)) {
@@ -268,6 +424,113 @@
                 return false
             }
         },
+
+        /* 本地化存储相关 */
+
+        /**
+         * @description 获取Cookie
+         * @param {String} name 待获取cookie的名字
+         * @returns {String}
+         */ 
+        getCookie: function (name) {
+            var arr = document.cookie.split('; ')
+            var ret
+            for (var i = 0, len = arr.length; i < len; i++) {
+                var temp = arr[i].split('=')
+                if (temp[0] === name) {
+                    ret = temp[1]
+                    return ret
+                }
+            }
+            if (!ret) {
+                throw '未找到名称为' + name + '的参数，请检查拼写是否正确'
+                return false
+            }
+        },
+        /**
+         * @description 设置Cookie
+         * @param {String} name 待获取cookie的名字
+         * @returns {Null}
+         */ 
+        setCookie: function (name, value, day) {
+            var oDate = new Date()
+            oDate.setDate(oDate.getDate() + day)
+            document.cookie = name + '=' + value + ';expires=' + oDate  
+        },
+
+        /* 请求协议相关 */
+
+        /**
+         * @description url参数解析
+         * @param {String} value 当前url信息
+         * @returns {String} source
+         * @returns {String} protocol
+         * @returns {String} host 
+         * @returns {String} port
+         * @returns {String} query
+         * @returns {String} params
+         * @returns {String} file
+         * @returns {String} hash
+         * @returns {String} path
+         * @returns {String} relative
+         * @returns {String} segments
+         */ 
+        parseUrl: function (url) {
+            var a = document.createElement('a')
+            a.href = url
+            return {
+                source: url,
+                protocol: a.protocol.replace(':', ''),
+                host: a.hostname,
+                port: a.port,
+                query: a.search,
+                params: (function () {
+                    var ret = {},
+                        seg = a.search.replace(/^\?/, '').split('&'),
+                        len = seg.length,
+                        i = 0,
+                        s
+                    for (; i < len; i++) {
+                        if (!seg[i]) {
+                            continue
+                        }
+                        s = seg[i].split('=')
+                        ret[s[0]] = s[1]
+                    }
+                    return ret
+                })(),
+                file: (a.pathname.match(/\/([^\/?#]+)$/i) || [, ''])[1],
+                hash: a.hash.replace('#', ''),
+                path: a.pathname.replace(/^([^\/])/, '/$1'),
+                relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [, ''])[1],
+                segments: a.pathname.replace(/^\//, '').split('/')
+            }
+        },
+        /**
+         * @description 请求data数据格式转换
+         * @param {String} type 请求转换的类型值
+         * @param {Object} data 请求转换的数据
+         * @returns {Unknown}
+         */ 
+        transContentType: function (type, data) {
+            var ret
+            if (type === 'x-www-form-urlencoded') {
+                ret = this._transFormUrlencoded(data)
+            }
+            return ret
+        },
+        /**
+         * @description transContentType私有方法
+         * @param {Object} data 请求转换的数据
+         * @returns {String}
+         */ 
+        _transFormUrlencoded: function (data) {
+            var ret = []
+            for (var key in data) {
+                ret.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+            }
+            return ret.join('&')
+        }
     }
     return xutil
 });
