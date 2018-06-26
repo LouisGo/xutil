@@ -10,7 +10,7 @@
         /**
          * @description 绑定事件
          * @returns {Function}
-         */ 
+         */
         on: function () {
             if (document.addEventListener) {
                 return function (element, event, handler) {
@@ -29,7 +29,7 @@
         /**
          * @description 解除事件
          * @returns {Function}
-         */ 
+         */
         off: function () {
             if (document.removeEventListener) {
                 return function (element, event, handler) {
@@ -143,7 +143,7 @@
          * @param {number} wait 等待的时间间隔 
          * @param {object} options leading为false表示禁用第一次, trailing为false表示最后不会再执行一次。默认leading:true, trailing:true
          * @returns {function}
-         */   
+         */
         throttle: function (func, wait, options) {
             var timeout, context, args, result
             var previous = 0
@@ -154,6 +154,7 @@
                 previous = options.leading === false ? 0 : +new Date()
                 timeout = null
                 func.apply(context, args)
+                
                 if (!timeout) {
                     context = args = null
                 }
@@ -238,7 +239,7 @@
          * @param {String Number Object} value 待判断的值
          * @param {Array} arr 待判断的数组  
          * @returns {Boolean}
-         */ 
+         */
         oneOf: function (value, arr) {
             for (var i = 0, len = arr.length; i < len; i++) {
                 if (this.eq(value, arr[i])) {
@@ -254,7 +255,7 @@
          * @description 判断元素类型
          * @param {Unknown} obj 待判断的值
          * @returns {String} 类型字段
-         */ 
+         */
         getType: function (obj) {
 
             var class2type = {}
@@ -280,7 +281,7 @@
          * @param {Unknown} value 待判断的值1
          * @param {Unknown} arr 待判断的值2
          * @returns {Boolean}
-         */ 
+         */
         eq: function (value, other) {
             return value === other || (value !== value && other !== other)
         },
@@ -317,13 +318,13 @@
         randomColorWithRGB: function () {
             return 'rgb(' + this.randomNumber(255) + ',' + this.randomNumber(255) + ',' + this.randomNumber(255) + ')'
         },
-        
+
         /* 宿主环境相关方法 */
 
         /**
          * @description 获取浏览器信息
          * @returns {String} 浏览器信息字段
-         */ 
+         */
         getBrowser: function () {
             var ua = window.navigator.userAgent
             var ret = 'Unknown browser'
@@ -369,7 +370,7 @@
         /**
          * @description 获取终端信息
          * @returns {String} 终端信息字段
-         */ 
+         */
         getOS: function () {
             var av = window.navigator.appVersion
             var ret = 'Unknown OS'
@@ -390,7 +391,7 @@
         /**
          * @description 获取IE版本
          * @returns {Boolean} IE版本字段
-         */ 
+         */
         getIEVersion: function () {
             var ua = window.navigator.userAgent
             var ret = ''
@@ -415,7 +416,7 @@
         /**
          * @description 判断是否为移动端
          * @returns {Boolean}
-         */ 
+         */
         isMobile: function () {
             var ua = window.navigator.userAgent
             if (!!ua.match(/AppleWebKit.*Mobile.*/) && !!ua.match(/AppleWebKit/)) {
@@ -431,7 +432,7 @@
          * @description 获取Cookie
          * @param {String} name 待获取cookie的名字
          * @returns {String}
-         */ 
+         */
         getCookie: function (name) {
             var arr = document.cookie.split('; ')
             var ret
@@ -451,11 +452,11 @@
          * @description 设置Cookie
          * @param {String} name 待获取cookie的名字
          * @returns {Null}
-         */ 
+         */
         setCookie: function (name, value, day) {
             var oDate = new Date()
             oDate.setDate(oDate.getDate() + day)
-            document.cookie = name + '=' + value + ';expires=' + oDate  
+            document.cookie = name + '=' + value + ';expires=' + oDate
         },
 
         /* 请求协议相关 */
@@ -474,7 +475,7 @@
          * @returns {String} path
          * @returns {String} relative
          * @returns {String} segments
-         */ 
+         */
         parseUrl: function (url) {
             var a = document.createElement('a')
             a.href = url
@@ -487,10 +488,8 @@
                 params: (function () {
                     var ret = {},
                         seg = a.search.replace(/^\?/, '').split('&'),
-                        len = seg.length,
-                        i = 0,
                         s
-                    for (; i < len; i++) {
+                    for (var i = 0, len = seg.length; i < len; i++) {
                         if (!seg[i]) {
                             continue
                         }
@@ -511,7 +510,7 @@
          * @param {String} type 请求转换的类型值
          * @param {Object} data 请求转换的数据
          * @returns {Unknown}
-         */ 
+         */
         transContentType: function (type, data) {
             var ret
             if (type === 'x-www-form-urlencoded') {
@@ -523,7 +522,7 @@
          * @description transContentType私有方法
          * @param {Object} data 请求转换的数据
          * @returns {String}
-         */ 
+         */
         _transFormUrlencoded: function (data) {
             var ret = []
             for (var key in data) {
